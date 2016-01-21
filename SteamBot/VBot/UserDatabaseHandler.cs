@@ -11,12 +11,12 @@ namespace SteamBot
 {
     public class UserDatabaseHandler
     {
-        public static Dictionary<string, EClanPermission> UserDatabase = UserDatabaseRetrieve(UserDatabaseFile);
         public static string UserDatabaseFile = "users.json";
+        public static Dictionary<string, EClanPermission> UserDatabase = UserDatabaseRetrieve(@UserDatabaseFile);
         public static Dictionary<string, EClanPermission> UserDatabaseRetrieve(string UserDatabase)
         { //TODO have this load with the bot
 
-            if (!File.Exists(UserDatabase))
+            if (!File.Exists(UserDatabaseFile))
             {
                 System.IO.File.WriteAllText(@UserDatabase, JsonConvert.SerializeObject(new Dictionary<string, EClanPermission>()));
                 Dictionary<string, EClanPermission> UserDatabaseData = new Dictionary<string, EClanPermission>();

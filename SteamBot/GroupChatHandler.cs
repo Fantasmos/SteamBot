@@ -129,12 +129,24 @@ namespace SteamBot
             Log.Interface("Entered Chat");
         }
 
+
+        public static string[] newstring = { "1", "2" };
+
+        public static Tuple<string, string[]> Data1 = new Tuple<string, string[]>("Test", newstring);
+        public static Tuple<string, string[]> Data2 = new Tuple<string, string[]>("Test2", newstring);
+        public static Tuple<string, string[]>[] Data3 = { Data1, Data2 };
+        public static Dictionary<string,Tuple<string,string[]>> Dictionary = new Dictionary<string,Tuple<string,string[]>>();
+        
+
         /// <summary>
         /// The bot's actions upon logging in
         /// </summary>
         /// <param name="callback"></param>
         public override void OnLoginCompleted()
         {
+            Dictionary.Add("Test1", Data1);
+            Dictionary.Add("test2", Data2);
+            Log.Interface(JsonConvert.SerializeObject(Dictionary).ToString());
             Log.Interface("Use 'exec 0 join' to join a chatroom");
             Log.Interface("RSS Enabled By default");
             if (DoOnce == true)
@@ -237,6 +249,8 @@ namespace SteamBot
             }
             string response = null;
             response = VBotCommands.Chatcommands(chatID, sender, message.ToLower());
+            Log.Interface(VBotCommands.Chatcommands(chatID, sender, message.ToLower()));
+            Log.Interface(sender.ToString());
             if (response != null) {
                 if (!UserDatabaseHandler.BanList.ContainsKey(sender.ToString()) || UserDatabaseHandler.admincheck(sender))
                 {

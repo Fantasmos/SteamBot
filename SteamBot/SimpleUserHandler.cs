@@ -71,29 +71,7 @@ namespace SteamBot
 			}
         }
 			
-		public static void maps(string map)
-		{
-			string path = @"logs\maps.log";
-
-			// This text is added only once to the file.
-			if (!File.Exists (path)) {
-				// Create a file to write to.
-				string createText = map;
-				File.WriteAllText (path, createText + Environment.NewLine);
-			} 
-			else 
-			{
-				// This text is always added, making the file longer over time
-				// if it is not deleted.
-				string appendText = map + Environment.NewLine;
-				File.AppendAllText (path, appendText);
-
-				// Open the file to read from.
-				string readText = File.ReadAllText (path);
-				Console.WriteLine (readText);
-			}
-		}
-
+		
         public override bool OnTradeRequest() 
         {
             return true;
