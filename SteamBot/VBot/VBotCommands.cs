@@ -16,7 +16,7 @@ namespace SteamBot
     public class VBotCommands
     {
         public static string Mapstoragepath2 = GroupChatHandler.groupchatsettings["MapStoragePath"];
-        public Bot Bot { get; private set; }
+        public static Bot Bot { get; private set; }
         public UserDatabaseHandler UserDatabase { get; private set; }
 
         public static Tuple<string, string, string, Int32>[] Servers = GroupChatHandler.ExtraSettingsData.Servers;
@@ -64,7 +64,7 @@ namespace SteamBot
         /// </summary>
         /// <param name="chatID">ChatID of the chatroom</param>
         /// <param name="message">The message sent</param>
-        public string admincommands(SteamID sender, string FullMessage)
+        public static string admincommands(SteamID sender, string FullMessage)
         {
             FullMessage.Replace(@"\s+", " ");
             string[] Words = FullMessage.Split();
@@ -204,10 +204,10 @@ namespace SteamBot
         /// <param name="chatID">ChatID of the chatroom</param>
         /// <param name="sender">STEAMID of the sender</param>
         /// <param name="message">The message sent</param>
-        public string Chatcommands(SteamID chatID, SteamID sender, string FullMessage)
+        public static string Chatcommands(SteamID chatID, SteamID sender, string FullMessage)
         {
             FullMessage.Replace(@"\s+", " ");
-            string[] Words = FullMessage.Split();
+            string[] Words = FullMessage.Split( );
             string Message = FullMessage.Remove(Words[0].Length + 1);
 
             //base.OnChatRoomMessage(chatID, sender, message);
@@ -368,7 +368,7 @@ namespace SteamBot
             return null;
         }
 
-       public bool DoesMessageStartWith (string Message, Tuple<string,string[]> Comparison)
+       public static bool DoesMessageStartWith (string Message, Tuple<string,string[]> Comparison)
         {
             
             foreach(string CommandWord in Comparison.Item2)

@@ -91,7 +91,7 @@ namespace SteamBot
         public static string SteamIDCommand = "!SteamID";
         
        
-        public VBotCommands VBotCommands { get; private set; }
+        public static VBotCommands VBotCommander { get; private set; }
        
 
         public static SteamID Groupchat = ulong.Parse(chatroomID);
@@ -204,10 +204,11 @@ namespace SteamBot
         /// <param name="message"> The message itself</param>
         /// <param name="type"></param>
         public override void OnMessage(string message, EChatEntryType type) {
-            SteamID ChatMsg = OtherSID;
+            
+           
+            
+            string response = VBotCommands.Chatcommands(OtherSID, OtherSID, message.ToLower());
             string adminresponse = null;
-            string response = VBotCommands.Chatcommands(ChatMsg, ChatMsg, message.ToLower());
-
             if (response != null)
             {
                 SendChatMessage(response);
