@@ -9,10 +9,12 @@ using Newtonsoft.Json;
 
 namespace SteamBot
 {
-    class ImpMaster
+    public class ImpMaster
     {
+      
+
         public static string MapStoragePath = GroupChatHandler.groupchatsettings["MapStoragePath"];
-        public static Bot Bot { get; set; }
+       
         public static Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist = Maplistfile(MapStoragePath);
 
         public static Dictionary<string, Tuple<string, SteamID, string, bool>> Maplistfile(string MapStoragePath)
@@ -27,6 +29,16 @@ namespace SteamBot
                 System.IO.File.WriteAllText(@MapStoragePath, JsonConvert.SerializeObject(EmptyMaplist));
                 return EmptyMaplist;
             }
+        }
+
+        public static Dictionary<string, Tuple<string, SteamID, string, bool>> GetMapList ()
+        {
+            if (File.Exists(MapStoragePath))
+
+            {
+                return JsonConvert.DeserializeObject<Dictionary<string, Tuple<string, SteamID, string, bool>>>(System.IO.File.ReadAllText(@MapStoragePath));
+            }
+            return null;
         }
 
         /// <summary>
@@ -134,7 +146,7 @@ namespace SteamBot
                     GroupChatHandler.SpreadsheetSync = true;
                     if (DeletionReason != null)
                     {
-                        Bot.SteamFriends.SendChatMessage(item.Value.Item2, EChatEntryType.ChatMsg, "Hi, your map: " + item.Key + " was removed from the map list, reason given:" + DeletionReason);
+                        //Bot.SteamFriends.SendChatMessage(item.Value.Item2, EChatEntryType.ChatMsg, "Hi, your map: " + item.Key + " was removed from the map list, reason given:" + DeletionReason);
                     }
                 }
                 else {

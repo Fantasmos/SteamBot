@@ -16,7 +16,10 @@ namespace SteamBot
     public class VBotCommands
     {
         public static string Mapstoragepath2 = GroupChatHandler.groupchatsettings["MapStoragePath"];
-        public static Bot Bot { get; private set; }
+
+        public static Bot BotName2 { get; private set; }
+
+        static ImpMaster ImpMasterData { get;  set; }
         public UserDatabaseHandler UserDatabase { get; private set; }
 
         public static Tuple<string, string, string, Int32>[] Servers = GroupChatHandler.ExtraSettingsData.Servers;
@@ -50,12 +53,12 @@ namespace SteamBot
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
                 if (FullMessage.StartsWith("!ReJoin", StringComparison.OrdinalIgnoreCase))
             {
-                Bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
-                Bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                BotName2.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
+                BotName2.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (Words[0].StartsWith("!Say", StringComparison.OrdinalIgnoreCase))
             {
-                Bot.SteamFriends.SendChatRoomMessage(GroupChatHandler.Groupchat, EChatEntryType.ChatMsg, Message);
+                BotName2.SteamFriends.SendChatRoomMessage(GroupChatHandler.Groupchat, EChatEntryType.ChatMsg, Message);
             }
             if(DoesMessageStartWith(Words[0], ChatCommands["SetMOTD"].Item2))
             {
@@ -68,7 +71,7 @@ namespace SteamBot
                     }
                     else
                     {
-                        BackgroundWork.MOTDSetter = Bot.SteamFriends.GetFriendPersonaName(sender) + " " + sender;
+                        BackgroundWork.MOTDSetter = BotName2.SteamFriends.GetFriendPersonaName(sender) + " " + sender;
                         BackgroundWork.MOTD = Message;
                         return "MOTD Set to: " + Message;
                     }
@@ -80,7 +83,7 @@ namespace SteamBot
             }
             if (Message.StartsWith("Say my name", StringComparison.OrdinalIgnoreCase))
             {
-                return Bot.SteamFriends.GetFriendPersonaName(sender);
+                return BotName2.SteamFriends.GetFriendPersonaName(sender);
             }
             if(DoesMessageStartWith(Words[0], ChatCommands["RemoveMOTD"].Item2))
             {
@@ -123,8 +126,8 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
             {
-                Bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
-                Bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                BotName2.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
+                BotName2.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Unban"].Item2))
             {
@@ -159,8 +162,8 @@ namespace SteamBot
                     UserDatabaseHandler.BanList.Add(Userid.ToString(), int.Parse(Words[2]) * 24);
                     System.IO.File.WriteAllText(@UserDatabaseHandler.BanListFilePath, JsonConvert.SerializeObject(UserDatabaseHandler.BanList));
 
-                    Bot.SteamFriends.SendChatMessage(Userid, EChatEntryType.ChatMsg, "You have been banned from using all bot features for " + Words[2] + "days. Reason given: " + Reason[1]);
-                    return "Banned user:" + Userid.ToString() + " (" + Bot.SteamFriends.GetFriendPersonaName(Userid).ToString() + ") for: " + Words[2] + " days. Reason given: " + Reason[1];
+                    BotName2.SteamFriends.SendChatMessage(Userid, EChatEntryType.ChatMsg, "You have been banned from using all bot features for " + Words[2] + "days. Reason given: " + Reason[1]);
+                    return "Banned user:" + Userid.ToString() + " (" + BotName2.SteamFriends.GetFriendPersonaName(Userid).ToString() + ") for: " + Words[2] + " days. Reason given: " + Reason[1];
                 }
                 else
                 {
@@ -184,10 +187,13 @@ namespace SteamBot
         /// <param name="message">The message sent</param>
         public static string Chatcommands(SteamID chatID, SteamID sender, string FullMessage)
         {
-            //FullMessage.Replace(@"\s+", " ");
+            FullMessage.Replace(@"\s+", " ");
             string[] Words = FullMessage.Split(' ');
-          
-            string Message = FullMessage.Remove(Words[0].Length - FullMessage.Contains(' ').GetHashCode());  //TODO GET THIS PART FIXED
+            string Message = FullMessage;
+            if (Words.Length > 1)
+            {
+                Message = FullMessage.Remove(Words[0].Length + 1);  //TODO GET THIS PART FIXED
+            }
             
             //base.OnChatRoomMessage(chatID, sender, message);
 
@@ -225,7 +231,7 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
             {
-                Bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                BotName2.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["MOTDSetter"].Item2))
             {
@@ -262,6 +268,7 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["ImpCommands"].Item2))
             { 
+                
                 if (Words.Length == 1) {
                     return "!add <mapname> <url> <notes> is the command. however if the map is uploaded you do not need to include the url";
                 }
@@ -282,7 +289,7 @@ namespace SteamBot
                 }
 
             }
-            if (DoesMessageStartWith(Message, ChatCommands["Update"].Item2))
+            if (DoesMessageStartWith(Words[0], ChatCommands["Update"].Item2))
             {
             
                 if (Words.Length <= 2)  //Checks if there are less than 2 words, the previous map and map to change
@@ -322,16 +329,28 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["MapCommands"].Item2))
             {
-                // Dictionary<string, Tuple<string, SteamID>> entrydata = JsonConvert.DeserializeObject<Dictionary<string, Tuple<string, SteamID>>>(System.IO.File.ReadAllText(@MapStoragePath)); //TODO can we get rid of this?
+
+
+                Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>();
+                
+             //   if (File.Exists(@"Maps.json"))
+
+            //    {
+            //        Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>(JsonConvert.DeserializeObject<Dictionary<string, Tuple<string, SteamID, string, bool>>>(System.IO.File.ReadAllText(@"Maps.json")));
+          //      }
+            //    else
+            //    {
+             //       System.IO.File.WriteAllText(@"Maps.json", JsonConvert.SerializeObject(Maplist));
+             //   }
                 
                 string Maplisting = "";
-                string DownloadListing = "";
-                foreach (var item in ImpMaster.Maplist)
-                {
-                    Maplisting = Maplisting + item.Key + " , ";
-                    DownloadListing = DownloadListing + item.Value.Item1 + " , ";
-                }
-                Bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, DownloadListing);
+                string DownloadListing = " Test";
+                //  foreach (var item in Maplist)
+                // {
+                //      Maplisting = Maplisting + item.Key + " , ";
+                //      DownloadListing = DownloadListing + item.Value.Item1 + " , ";
+                // }
+                BotName2.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, DownloadListing);
                 return Maplisting;
             }
             foreach (Tuple<string, string, string, Int32> ServerAddress in Servers)

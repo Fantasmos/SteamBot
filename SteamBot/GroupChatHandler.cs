@@ -30,8 +30,8 @@ namespace SteamBot
     {
         //JSON files store data, check if this works later. 
 
-      
-
+        public static Bot BotName { get; set; }
+       
         public class ExtraSettings
         {
             public Tuple<string, string, string, Int32>[] Servers { get; set; }

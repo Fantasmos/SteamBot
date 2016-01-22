@@ -14,38 +14,42 @@
       }
    ],
    "Feeds":[  
-      "http://www.teamfortress.com/rss.xml"
+      "http://www.teamfortress.com/rss.xml" , 
+      "http://steamcommunity.com/groups/tf2maps_twitter/rss/"
    ],
    "Searches":{  
       "!vdc":"developer.valvesoftware.com",
       "!tf2w":"wiki.teamfortress.com",
-      "!mal":"myanimelist.net"
+      "!mal":"myanimelist.net",
+      "!tf2m":"tf2maps.net"
    },
    "Settings":{  
       "impCommand":"!add",
       "mapListCommand":"!MAPS",
       "clearcommand":"!CLEAR",
       "deletecommand":"!del",
-      "chatroomID":"ChatIDGoesHere",
+      "chatroomID":"103582791429594873",
       "MapListUrl":"http://redirect.tf2maps.net/maps",
-      "OnlineSync":"false",
-      "OnlineSearch":"false",
+      "OnlineSync":"true",
+      "OnlineSearch":"true",
       "MapStoragePath":"maps.json",
       "UserDatabase":"users.json",
 	  
-      "GoogleAPI":"Google API goes here",
-      "CLIENT_ID":"Client ID goes here",
-      "CLIENT_SECRET":"Client Secret Goes here",
-      "SCOPE":"Scope Goes here",
-      "REDIRECT_URI":"Redirect URI goes here",
-      "SpreadSheetURI":"Spreadsheet URI goes here",
+      "GoogleAPI":"1/NPS3ed9fnQ1Zb4GR_6T7IyfoQkwIkBQe8wQfgUV9rFA",
+      "CLIENT_ID":"1051172542633-h0o3vs60pulsmfh3lnko6pfqqa6ccut3.apps.googleusercontent.com",
+      "CLIENT_SECRET":"iEnsqA3uWPuC3F6ptHsNIfRI",
+      "SCOPE":"https://spreadsheets.google.com/feeds https://docs.google.com/feeds",
+      "REDIRECT_URI":"urn:ietf:wg:oauth:2.0:oob",
+      "SpreadSheetURI":"1BGqQLnUFc2tO8NhALm7eLGlFRTSteMTGb5v4isVjK6o",
       "IntegrationName":"MySpreadsheetIntegration-v1",
-      "CX":"Google Search CX goes here",
-      "APIKEY":"Google Search API goes here"
+      
+      "CX":"001607953254528177127%3A0vuo216cctc",
+      "APIKEY":"AIzaSyDljqLyfAQbD2xFEayW2Lfk_AKhW835S3o"
       
    },
    "InstantReplies":{                     
-      "ghost?":"no",
-      "!help":"http://tf2maps.net/threads/we-now-have-a-steam-chat-bot.26274/"
+      "ghost?":"Nope",
+      "!help":"http://tf2maps.net/threads/we-now-have-a-steam-chat-bot.26274/",
+      "!Sheet":"https://goo.gl/Q5bQxg"
    }
 }
