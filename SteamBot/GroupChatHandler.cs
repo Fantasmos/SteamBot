@@ -64,6 +64,7 @@ namespace SteamBot
         public string deletecommand = groupchatsettings["deletecommand"];
         public string clearcommand = groupchatsettings["clearcommand"];
         public static string chatroomID = groupchatsettings["chatroomID"];
+        public static string HelpLink = groupchatsettings["HelpLink"];
 
         public static string OnlineSearch = groupchatsettings["OnlineSearch"];
         public static string CX = groupchatsettings["CX"];
@@ -78,7 +79,7 @@ namespace SteamBot
 
         public string UploadCheckCommand = "!uploadcheck";
         public static string ServerListUrl = groupchatsettings["MapListUrl"];
-        public static bool EnableRSS = true;
+        public static bool EnableRSS = false;
    
 
         public static string PreviousMap1 = " ";
@@ -128,9 +129,7 @@ namespace SteamBot
         }
 
         public static string[] newstring = { "1", "2" };
-        public static Tuple<string, string[]> Data1 = new Tuple<string, string[]>("Test", newstring);
-        public static Tuple<string, string[]> Data2 = new Tuple<string, string[]>("Test2", newstring);
-        public static Tuple<string, string[]>[] Data3 = { Data1, Data2 };
+       
         public static Dictionary<string,Tuple<string,string[]>> Dictionary = new Dictionary<string,Tuple<string,string[]>>();
         
         /// <summary>
@@ -139,14 +138,11 @@ namespace SteamBot
         /// <param name="callback"></param>
         public override void OnLoginCompleted()
         {
-            Dictionary.Add("Test1", Data1);
-            Dictionary.Add("test2", Data2);
-            Log.Interface(JsonConvert.SerializeObject(Dictionary).ToString());
-            Log.Interface("Use 'exec 0 join' to join a chatroom");
-            Log.Interface("RSS Enabled By default");
+           
+           
             if (DoOnce == true)
             {
-
+                Bot.SteamFriends.SetPersonaName("[" + Maplist.Count.ToString() + "] " + Bot.DisplayName);
                 BackgroundWork.InitTimer();
                 BackgroundWork.RSSTimer();
                 BackgroundWork.InitMOTDTimer();
@@ -211,19 +207,26 @@ namespace SteamBot
         /// <param name="message"> The message itself</param>
         /// <param name="type"></param>
         public override void OnMessage(string message, EChatEntryType type) {
-            
-           
-            
-            string response = VBotCommands.Chatcommands(OtherSID, OtherSID, message.ToLower(), Bot);
+
+
+            string response = null; 
             string adminresponse = null;
-            if (response != null)
+
+            if (!UserDatabaseHandler.BanList.ContainsKey(OtherSID.ToString()) || UserDatabaseHandler.admincheck(OtherSID))
             {
-                SendChatMessage(response);
+                response = VBotCommands.Chatcommands(OtherSID, OtherSID, message.ToLower(), Bot);
+                if (response != null)
+                {
+                    SendChatMessage(response);
+                }
+            }
+            else
+            {
+                SendChatMessage("You are currently banned from using the Bot");
             }
 
             if (UserDatabaseHandler.admincheck(OtherSID)) {
-               
-            //    adminresponse = SteamBot.VBot.VBotCommands.admincommands(OtherSID, message);
+                adminresponse = VBotCommands.admincommands(OtherSID, message, Bot);
             }
             if (adminresponse != null) {
                 SendChatMessage(adminresponse);
@@ -237,26 +240,23 @@ namespace SteamBot
         /// <param name="message">The message</param>
 		public override void OnChatRoomMessage(SteamID chatID, SteamID sender, string message)
         {
+            Bot.SteamFriends.SetPersonaName("[" + ImpMaster.Maplist.Count.ToString() + "] " + Bot.DisplayName);
             BackgroundWork.GhostCheck = 120;
             string adminresponse = null;
+            string response = null;
+
             if (UserDatabaseHandler.admincheck(sender)) {
                 adminresponse = VBotCommands.admincommands(sender, message, Bot);
             }
-            string response = null;
-            response = VBotCommands.Chatcommands(chatID, sender, message.ToLower(), Bot);
-            Log.Interface(VBotCommands.Chatcommands(chatID, sender, message.ToLower(), Bot));
-            Log.Interface(sender.ToString());
-            if (response != null) {
-                if (!UserDatabaseHandler.BanList.ContainsKey(sender.ToString()) || UserDatabaseHandler.admincheck(sender))
-                {
-                    Bot.SteamFriends.SendChatRoomMessage(Groupchat, EChatEntryType.ChatMsg, response);
-                }
-                else
-                {
-                    Bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, "You are currently banned from using the bot, hours remaining: " + UserDatabaseHandler.BanList[sender.ToString()]);
-                }
+            if (!UserDatabaseHandler.BanList.ContainsKey(sender.ToString()) || UserDatabaseHandler.admincheck(sender))
+            {
+                response = VBotCommands.Chatcommands(chatID, sender, message.ToLower(), Bot);
+            }
 
-                }
+            if (response != null) {
+                Bot.SteamFriends.SendChatRoomMessage(Groupchat, EChatEntryType.ChatMsg, response);
+            }
+                
             if (adminresponse != null) {
                 
                 Bot.SteamFriends.SendChatRoomMessage(Groupchat, EChatEntryType.ChatMsg, adminresponse);

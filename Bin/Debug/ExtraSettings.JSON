@@ -34,7 +34,8 @@
       "OnlineSearch":"true",
       "MapStoragePath":"maps.json",
       "UserDatabase":"users.json",
-	  
+      "HelpLink":"http://tf2maps.net/threads/we-now-have-a-steam-chat-bot.26274/",
+
       "GoogleAPI":"1/NPS3ed9fnQ1Zb4GR_6T7IyfoQkwIkBQe8wQfgUV9rFA",
       "CLIENT_ID":"1051172542633-h0o3vs60pulsmfh3lnko6pfqqa6ccut3.apps.googleusercontent.com",
       "CLIENT_SECRET":"iEnsqA3uWPuC3F6ptHsNIfRI",
@@ -49,7 +50,6 @@
    },
    "InstantReplies":{                     
       "ghost?":"Nope",
-      "!help":"http://tf2maps.net/threads/we-now-have-a-steam-chat-bot.26274/",
       "!Sheet":"https://goo.gl/Q5bQxg"
    }
 }
