@@ -30,7 +30,7 @@ namespace SteamBot
     {
         //JSON files store data, check if this works later. 
 
-        public static Bot BotName { get; set; }
+       
        
         public class ExtraSettings
         {
@@ -119,8 +119,6 @@ namespace SteamBot
             }
         }
        
-       
-       
         /// <summary>
         /// The bot's actions upon entering chat
         /// </summary>
@@ -129,15 +127,12 @@ namespace SteamBot
             Log.Interface("Entered Chat");
         }
 
-
         public static string[] newstring = { "1", "2" };
-
         public static Tuple<string, string[]> Data1 = new Tuple<string, string[]>("Test", newstring);
         public static Tuple<string, string[]> Data2 = new Tuple<string, string[]>("Test2", newstring);
         public static Tuple<string, string[]>[] Data3 = { Data1, Data2 };
         public static Dictionary<string,Tuple<string,string[]>> Dictionary = new Dictionary<string,Tuple<string,string[]>>();
         
-
         /// <summary>
         /// The bot's actions upon logging in
         /// </summary>

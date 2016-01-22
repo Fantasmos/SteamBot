@@ -17,7 +17,7 @@ namespace SteamBot
     {
         public static string Mapstoragepath2 = GroupChatHandler.groupchatsettings["MapStoragePath"];
 
-        public static Bot BotName2 { get; private set; }
+        public static Bot bot { get; private set; }
 
         static ImpMaster ImpMasterData { get;  set; }
         public UserDatabaseHandler UserDatabase { get; private set; }
@@ -53,12 +53,12 @@ namespace SteamBot
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
                 if (FullMessage.StartsWith("!ReJoin", StringComparison.OrdinalIgnoreCase))
             {
-                BotName2.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
-                BotName2.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
+                bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (Words[0].StartsWith("!Say", StringComparison.OrdinalIgnoreCase))
             {
-                BotName2.SteamFriends.SendChatRoomMessage(GroupChatHandler.Groupchat, EChatEntryType.ChatMsg, Message);
+                bot.SteamFriends.SendChatRoomMessage(GroupChatHandler.Groupchat, EChatEntryType.ChatMsg, Message);
             }
             if(DoesMessageStartWith(Words[0], ChatCommands["SetMOTD"].Item2))
             {
@@ -71,7 +71,7 @@ namespace SteamBot
                     }
                     else
                     {
-                        BackgroundWork.MOTDSetter = BotName2.SteamFriends.GetFriendPersonaName(sender) + " " + sender;
+                        BackgroundWork.MOTDSetter = bot.SteamFriends.GetFriendPersonaName(sender) + " " + sender;
                         BackgroundWork.MOTD = Message;
                         return "MOTD Set to: " + Message;
                     }
@@ -83,7 +83,7 @@ namespace SteamBot
             }
             if (Message.StartsWith("Say my name", StringComparison.OrdinalIgnoreCase))
             {
-                return BotName2.SteamFriends.GetFriendPersonaName(sender);
+                return bot.SteamFriends.GetFriendPersonaName(sender);
             }
             if(DoesMessageStartWith(Words[0], ChatCommands["RemoveMOTD"].Item2))
             {
@@ -126,8 +126,8 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
             {
-                BotName2.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
-                BotName2.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+               bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
+               bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Unban"].Item2))
             {
@@ -162,8 +162,8 @@ namespace SteamBot
                     UserDatabaseHandler.BanList.Add(Userid.ToString(), int.Parse(Words[2]) * 24);
                     System.IO.File.WriteAllText(@UserDatabaseHandler.BanListFilePath, JsonConvert.SerializeObject(UserDatabaseHandler.BanList));
 
-                    BotName2.SteamFriends.SendChatMessage(Userid, EChatEntryType.ChatMsg, "You have been banned from using all bot features for " + Words[2] + "days. Reason given: " + Reason[1]);
-                    return "Banned user:" + Userid.ToString() + " (" + BotName2.SteamFriends.GetFriendPersonaName(Userid).ToString() + ") for: " + Words[2] + " days. Reason given: " + Reason[1];
+                    bot.SteamFriends.SendChatMessage(Userid, EChatEntryType.ChatMsg, "You have been banned from using all bot features for " + Words[2] + "days. Reason given: " + Reason[1]);
+                    return "Banned user:" + Userid.ToString() + " (" + bot.SteamFriends.GetFriendPersonaName(Userid).ToString() + ") for: " + Words[2] + " days. Reason given: " + Reason[1];
                 }
                 else
                 {
@@ -231,7 +231,7 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
             {
-                BotName2.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["MOTDSetter"].Item2))
             {
@@ -344,13 +344,13 @@ namespace SteamBot
              //   }
                 
                 string Maplisting = "";
-                string DownloadListing = " Test";
-                //  foreach (var item in Maplist)
-                // {
-                //      Maplisting = Maplisting + item.Key + " , ";
-                //      DownloadListing = DownloadListing + item.Value.Item1 + " , ";
-                // }
-                BotName2.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, DownloadListing);
+                string DownloadListing = "Test";
+              //  foreach (var item in Maplist)
+               // {
+              //      Maplisting = Maplisting + item.Key + " , ";
+              //      DownloadListing = DownloadListing + item.Value.Item1 + " , ";
+               // }
+                bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, DownloadListing);
                 return Maplisting;
             }
             foreach (Tuple<string, string, string, Int32> ServerAddress in Servers)
