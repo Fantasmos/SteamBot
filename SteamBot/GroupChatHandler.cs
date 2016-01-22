@@ -214,7 +214,7 @@ namespace SteamBot
             
            
             
-            string response = VBotCommands.Chatcommands(OtherSID, OtherSID, message.ToLower());
+            string response = VBotCommands.Chatcommands(OtherSID, OtherSID, message.ToLower(), Bot);
             string adminresponse = null;
             if (response != null)
             {
@@ -240,11 +240,11 @@ namespace SteamBot
             BackgroundWork.GhostCheck = 120;
             string adminresponse = null;
             if (UserDatabaseHandler.admincheck(sender)) {
-                adminresponse = VBotCommands.admincommands(sender, message);
+                adminresponse = VBotCommands.admincommands(sender, message, Bot);
             }
             string response = null;
-            response = VBotCommands.Chatcommands(chatID, sender, message.ToLower());
-            Log.Interface(VBotCommands.Chatcommands(chatID, sender, message.ToLower()));
+            response = VBotCommands.Chatcommands(chatID, sender, message.ToLower(), Bot);
+            Log.Interface(VBotCommands.Chatcommands(chatID, sender, message.ToLower(), Bot));
             Log.Interface(sender.ToString());
             if (response != null) {
                 if (!UserDatabaseHandler.BanList.ContainsKey(sender.ToString()) || UserDatabaseHandler.admincheck(sender))
@@ -258,6 +258,7 @@ namespace SteamBot
 
                 }
             if (adminresponse != null) {
+                
                 Bot.SteamFriends.SendChatRoomMessage(Groupchat, EChatEntryType.ChatMsg, adminresponse);
             }
         }

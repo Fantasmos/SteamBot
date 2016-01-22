@@ -17,7 +17,7 @@ namespace SteamBot
     {
         public static string Mapstoragepath2 = GroupChatHandler.groupchatsettings["MapStoragePath"];
 
-        public static Bot bot { get; private set; }
+      
 
         static ImpMaster ImpMasterData { get;  set; }
         public UserDatabaseHandler UserDatabase { get; private set; }
@@ -44,7 +44,7 @@ namespace SteamBot
         /// </summary>
         /// <param name="chatID">ChatID of the chatroom</param>
         /// <param name="message">The message sent</param>
-        public static string admincommands(SteamID sender, string FullMessage)
+        public static string admincommands(SteamID sender, string FullMessage , Bot Bot)
         {
             FullMessage.Replace(@"\s+", " ");
             string[] Words = FullMessage.Split();
@@ -53,12 +53,12 @@ namespace SteamBot
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
                 if (FullMessage.StartsWith("!ReJoin", StringComparison.OrdinalIgnoreCase))
             {
-                bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
-                bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                Bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
+                Bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (Words[0].StartsWith("!Say", StringComparison.OrdinalIgnoreCase))
             {
-                bot.SteamFriends.SendChatRoomMessage(GroupChatHandler.Groupchat, EChatEntryType.ChatMsg, Message);
+                Bot.SteamFriends.SendChatRoomMessage(GroupChatHandler.Groupchat, EChatEntryType.ChatMsg, Message);
             }
             if(DoesMessageStartWith(Words[0], ChatCommands["SetMOTD"].Item2))
             {
@@ -71,7 +71,7 @@ namespace SteamBot
                     }
                     else
                     {
-                        BackgroundWork.MOTDSetter = bot.SteamFriends.GetFriendPersonaName(sender) + " " + sender;
+                        BackgroundWork.MOTDSetter = Bot.SteamFriends.GetFriendPersonaName(sender) + " " + sender;
                         BackgroundWork.MOTD = Message;
                         return "MOTD Set to: " + Message;
                     }
@@ -83,7 +83,7 @@ namespace SteamBot
             }
             if (Message.StartsWith("Say my name", StringComparison.OrdinalIgnoreCase))
             {
-                return bot.SteamFriends.GetFriendPersonaName(sender);
+                return Bot.SteamFriends.GetFriendPersonaName(sender);
             }
             if(DoesMessageStartWith(Words[0], ChatCommands["RemoveMOTD"].Item2))
             {
@@ -126,8 +126,8 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
             {
-               bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
-               bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                Bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
+                Bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Unban"].Item2))
             {
@@ -162,8 +162,8 @@ namespace SteamBot
                     UserDatabaseHandler.BanList.Add(Userid.ToString(), int.Parse(Words[2]) * 24);
                     System.IO.File.WriteAllText(@UserDatabaseHandler.BanListFilePath, JsonConvert.SerializeObject(UserDatabaseHandler.BanList));
 
-                    bot.SteamFriends.SendChatMessage(Userid, EChatEntryType.ChatMsg, "You have been banned from using all bot features for " + Words[2] + "days. Reason given: " + Reason[1]);
-                    return "Banned user:" + Userid.ToString() + " (" + bot.SteamFriends.GetFriendPersonaName(Userid).ToString() + ") for: " + Words[2] + " days. Reason given: " + Reason[1];
+                    Bot.SteamFriends.SendChatMessage(Userid, EChatEntryType.ChatMsg, "You have been banned from using all bot features for " + Words[2] + "days. Reason given: " + Reason[1]);
+                    return "Banned user:" + Userid.ToString() + " (" + Bot.SteamFriends.GetFriendPersonaName(Userid).ToString() + ") for: " + Words[2] + " days. Reason given: " + Reason[1];
                 }
                 else
                 {
@@ -185,7 +185,7 @@ namespace SteamBot
         /// <param name="chatID">ChatID of the chatroom</param>
         /// <param name="sender">STEAMID of the sender</param>
         /// <param name="message">The message sent</param>
-        public static string Chatcommands(SteamID chatID, SteamID sender, string FullMessage)
+        public static string Chatcommands(SteamID chatID, SteamID sender, string FullMessage, Bot bot)
         {
             FullMessage.Replace(@"\s+", " ");
             string[] Words = FullMessage.Split(' ');
@@ -350,6 +350,7 @@ namespace SteamBot
               //      Maplisting = Maplisting + item.Key + " , ";
               //      DownloadListing = DownloadListing + item.Value.Item1 + " , ";
                // }
+                
                 bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, DownloadListing);
                 return Maplisting;
             }
