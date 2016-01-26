@@ -40,6 +40,14 @@ namespace SteamBot
             public Dictionary<string, string> Settings { get; set; }
             public Dictionary<string, string> InstantReplies { get; set; }
         }
+
+        public ImpMaster ImpmasterHandler = new ImpMaster();
+        
+        
+
+       
+
+
         public static UserDatabaseHandler UserDatabase { get; set; }
         public string CLIENT_ID = groupchatsettings["CLIENT_ID"];
         public string CLIENT_SECRET = groupchatsettings["CLIENT_SECRET"];
@@ -301,6 +309,23 @@ namespace SteamBot
             }
             
         }
+        
+        /// <summary>
+        /// Makes a google search, and restricts results to only a single URL.
+        /// Returns the URL of the first result
+        /// </summary>
+        public static string AdvancedGoogleSearch(string searchquery, string url, SteamID chatid)
+        {
+            if (OnlineSearch.StartsWith("true", StringComparison.OrdinalIgnoreCase))
+            {
+                WebClient client = new WebClient();
+                var search = client.DownloadString("https://www.googleapis.com/customsearch/v1?q=" + searchquery + "&cx=" + CX + "&siteSearch=" + url + "&key=" + APIKEY);
+                var obj = JObject.Parse(search);
+                var info = (string)obj["items"][0]["link"];
+                return info;
+            }
+            return null;
+        }
 
         /// <summary>
         /// Checks if the Map is uploaded to a server
@@ -322,23 +347,12 @@ namespace SteamBot
 		}
 		
       
-        /// <summary>
-        /// Makes a google search, and restricts results to only a single URL.
-        /// Returns the URL of the first result
-        /// </summary>
-        public static string AdvancedGoogleSearch(string searchquery, string url, SteamID chatid)
+ 
+        public void InitialiseImpMaster ()
         {
-            if (OnlineSearch.StartsWith("true", StringComparison.OrdinalIgnoreCase))
-            {
-                WebClient client = new WebClient();
-                var search = client.DownloadString("https://www.googleapis.com/customsearch/v1?q=" + searchquery + "&cx=" + CX + "&siteSearch=" + url + "&key=" + APIKEY);
-                var obj = JObject.Parse(search);
-                var info = (string)obj["items"][0]["link"];
-                return info;
-            }
-            return null;
+            
         }
-		
+               
         public GroupChatHandler(Bot bot, SteamID sid) : base(bot, sid) { }
 
         public override void OnFriendRemove() { }

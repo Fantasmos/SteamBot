@@ -12,39 +12,42 @@ namespace SteamBot
     public class ImpMaster
     {
 
-
+        // Instance Constructor.
+        public ImpMaster()
+        {   
+        }
         //public static string MapStoragePath = GroupChatHandler.groupchatsettings["MapStoragePath"];
 
         public static string MapStoragePath { get; set; }
 
         bool SpreadsheetSync { get; set; }
 
-        private static SpreadSheetSyncDelegate SpreadSheetSyncDelegatePassedMethod { get; set; }
+        public static SpreadSheetSyncDelegate SpreadSheetSyncDelegatePassedMethod { get; set; }
 
-        private delegate bool SpreadSheetSyncDelegate(bool UpdateSheet);
+        public delegate bool SpreadSheetSyncDelegate(bool UpdateSheet);
 
-        private static bool SpreadSheetSyncrhonise(bool UpdateSheet, SpreadSheetSyncDelegate SpreadSheetSynchroniser)
+        public static bool SpreadSheetSyncrhonise(bool UpdateSheet, SpreadSheetSyncDelegate SpreadSheetSynchroniser)
         {
             return SpreadSheetSynchroniser(UpdateSheet);
         }
 
 
-        private static FileUploadCheckDelegate FileUploadCheckPassedMethod { get; set; }
+        public static FileUploadCheckDelegate FileUploadCheckPassedMethod { get; set; }
 
-        private delegate bool FileUploadCheckDelegate(string map);
+        public delegate bool FileUploadCheckDelegate(string map);
 
-        private static bool FileUploadCheck(string map, FileUploadCheckDelegate UploadChecker)
+        public static bool FileUploadCheck(string map, FileUploadCheckDelegate UploadChecker)
         {
             return UploadChecker(map);
         }
 
 
 
-        private static AdminVerifyDelegate AdminVerifyPassedMethod { get; set; }
+        public static AdminVerifyDelegate AdminVerifyPassedMethod { get; set; }
 
-        private delegate bool AdminVerifyDelegate(SteamID User);
+        public delegate bool AdminVerifyDelegate(SteamID User);
 
-        private static bool AdminVerification(SteamID user, AdminVerifyDelegate AdminVerify)
+        public static bool AdminVerification(SteamID user, AdminVerifyDelegate AdminVerify)
         {
             return AdminVerify(user);
         }
@@ -170,6 +173,19 @@ namespace SteamBot
                 //GroupChatHandler.SpreadsheetSync = true;
                 SpreadSheetSyncrhonise(true, SpreadSheetSyncDelegatePassedMethod);
             }
+        }
+        public static void WipeAllMaps ()
+        {
+
+            Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>();
+
+            System.IO.File.WriteAllText(@MapStoragePath, JsonConvert.SerializeObject(Maplist));
+
+            Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>();
+
+            SpreadSheetSyncrhonise(true, SpreadSheetSyncDelegatePassedMethod);
+
+            return ;
         }
 
         /// <summary>

@@ -90,15 +90,8 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["ClearCommands"].Item2))
             {
-                string path = @GroupChatHandler.MapStoragePath;
-              
-                Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>();
+                ImpMaster.WipeAllMaps();
 
-                System.IO.File.WriteAllText(@MapStoragePath, JsonConvert.SerializeObject(Maplist));
-
-                ImpMaster.Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>();
-
-                GroupChatHandler.SpreadsheetSync = true;
                 return "Wiped all Maps";
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["EnableSync"].Item2))
