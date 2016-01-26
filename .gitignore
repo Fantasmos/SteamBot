@@ -30,3 +30,4 @@ packages
 # Allow NuGet specific exes and dlls
 !.nuget/Microsoft.Build.dll
 Bin/Release/ExtraSettings.json
+Bin/Debug/ExtraSettings.JSON
