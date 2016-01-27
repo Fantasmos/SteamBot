@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace SteamBot.VBot
 {
@@ -6,14 +7,7 @@ namespace SteamBot.VBot
     {
         public bool DoesMessageStartWith(string Message, string[] Comparison)
         {
-            foreach (string CommandWord in Comparison)
-            {
-                if (Message.StartsWith(CommandWord, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return Comparison.Any(CommandWord => Message.StartsWith(CommandWord, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
