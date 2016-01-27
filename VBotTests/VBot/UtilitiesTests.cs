@@ -1,10 +1,4 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using SteamBot.VBot;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SteamBot.VBot.Tests
 {
@@ -12,11 +6,26 @@ namespace SteamBot.VBot.Tests
     public class UtilitiesTests
     {
         [TestMethod()]
-        public void DoesMessageStartWithTest()
+        public void GivenANormalMessage_AndAnEmptyListOfMatches_ItCannotStartWithAnyOfThoseMatches()
         {
             Assert.IsFalse(new Utilities().DoesMessageStartWith("this is my message", new string[] { }));
+        }
+
+        [TestMethod()]
+        public void GivenANormalMessage_AndAnListOfMatchesThatItDoesNotStartWith_ItCannotStartWithAnyOfThoseMatches()
+        {
             Assert.IsFalse(new Utilities().DoesMessageStartWith("this is my message", new string[] { "a", "list", "of", "words" }));
+        }
+
+        [TestMethod()]
+        public void GivenANormalMessage_AndASingleMessageThatItMatches_ItDoesStartWithThatMatch()
+        {
             Assert.IsTrue(new Utilities().DoesMessageStartWith("this is my message", new string[] { "this" }));
+        }
+
+        [TestMethod()]
+        public void GivenANormalMessage_AndSomeWordsOfWhichAtLeastOneMatches_ItDoesStartWithThatMatch()
+        {
             Assert.IsTrue(new Utilities().DoesMessageStartWith("this is my message", new string[] { "some", "words", "this" }));
         }
     }
