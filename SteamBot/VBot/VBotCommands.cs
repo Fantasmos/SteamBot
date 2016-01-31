@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SteamKit2.Internal;
-using SteamTrade;
-using SteamTrade.TradeWebAPI;
 using SteamKit2;
-using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.IO;
+using SteamBot.VBot;
 
 namespace SteamBot
 {
@@ -19,29 +14,27 @@ namespace SteamBot
         static string MapStoragePath = GroupChatHandler.groupchatsettings["MapStoragePath"];
 
         static string ChatCommandsFilePath = "ChatCommands.Json";
-        static ImpMaster ImpMasterData { get;  set; }
+        static ImpMaster ImpMasterData { get; set; }
         public UserDatabaseHandler UserDatabase { get; private set; }
 
         public static Tuple<string, string, string, Int32>[] Servers = GroupChatHandler.ExtraSettingsData.Servers;
 
 
 
-        static Dictionary<string, Tuple<string,string[]>> ChatCommands = JsonConvert.DeserializeObject<Dictionary<string, Tuple<string,string[]>>>(System.IO.File.ReadAllText(@ChatCommandsFilePath));
-        
+        static Dictionary<string, Tuple<string, string[]>> ChatCommands = JsonConvert.DeserializeObject<Dictionary<string, Tuple<string, string[]>>>(System.IO.File.ReadAllText(@ChatCommandsFilePath));
 
-        public static void CommandPreProcessing (SteamID sender , SteamID ChatID , string FullMessage , bool InChatroom )
+
+        public static void CommandPreProcessing(SteamID sender, SteamID ChatID, string FullMessage, bool InChatroom)
         {
-            
         }
 
 
-        
         /// <summary>
         /// The commands that users can use by msg'ing the system. Returns a string with the appropriate responses
         /// </summary>
         /// <param name="chatID">ChatID of the chatroom</param>
         /// <param name="message">The message sent</param>
-        public static string admincommands(SteamID sender, string FullMessage , Bot Bot)
+        public static string admincommands(SteamID sender, string FullMessage, Bot Bot)
         {
             FullMessage.Replace(@"\s+", " ");
             string[] Words = FullMessage.Split();
@@ -50,15 +43,15 @@ namespace SteamBot
 
             if (DoesMessageStartWith(Words[0], ChatCommands["Rejoin"].Item2))
                 if (FullMessage.StartsWith("!ReJoin", StringComparison.OrdinalIgnoreCase))
-            {
-                Bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
-                Bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
-            }
+                {
+                    Bot.SteamFriends.LeaveChat(new SteamID(GroupChatHandler.Groupchat));
+                    Bot.SteamFriends.JoinChat(new SteamID(GroupChatHandler.Groupchat));
+                }
             if (Words[0].StartsWith("!Say", StringComparison.OrdinalIgnoreCase))
             {
                 Bot.SteamFriends.SendChatRoomMessage(GroupChatHandler.Groupchat, EChatEntryType.ChatMsg, Message);
             }
-            if(DoesMessageStartWith(Words[0], ChatCommands["SetMOTD"].Item2))
+            if (DoesMessageStartWith(Words[0], ChatCommands["SetMOTD"].Item2))
             {
                 if (Message != null)
                 {
@@ -83,7 +76,7 @@ namespace SteamBot
             {
                 return Bot.SteamFriends.GetFriendPersonaName(sender);
             }
-            if(DoesMessageStartWith(Words[0], ChatCommands["RemoveMOTD"].Item2))
+            if (DoesMessageStartWith(Words[0], ChatCommands["RemoveMOTD"].Item2))
             {
                 BackgroundWork.MOTD = null;
                 return "Removed MOTD";
@@ -143,7 +136,7 @@ namespace SteamBot
             if (DoesMessageStartWith(Words[0], ChatCommands["Ban"].Item2))
 
             {
-                
+
 
                 if (Words.Length > 3)
                 {
@@ -166,15 +159,9 @@ namespace SteamBot
                     return "The command is: " + "!Ban" + " <url of user>, Duration in days, Reason";
                 }
             }
-            
+
 
             return null;
-        }
-
-
-        public bool DoesMessageStartWith(String[] Comparison)
-        {
-            return false;
         }
 
         /// <summary>
@@ -192,7 +179,7 @@ namespace SteamBot
             {
                 Message = FullMessage.Remove(Words[0].Length + 1);  //TODO GET THIS PART FIXED
             }
-            
+
             //base.OnChatRoomMessage(chatID, sender, message);
 
             bool rank = UserDatabaseHandler.admincheck(sender);
@@ -201,7 +188,7 @@ namespace SteamBot
             {
                 if (Words[0].StartsWith(Entry.Key, StringComparison.OrdinalIgnoreCase))
                 {
-                  
+
                     return GroupChatHandler.AdvancedGoogleSearch(Message, Entry.Value, chatID);
                 }
             }
@@ -219,7 +206,8 @@ namespace SteamBot
                 {
                     return GroupChatHandler.GetSteamIDFromUrl(Words[1], true);
                 }
-                else {
+                else
+                {
                     return "URL is missing, please add a url";
                 }
             }
@@ -251,17 +239,19 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["UploadCheckCommand"].Item2))
             {
-                if (Words.Length > 0) {
+                if (Words.Length > 0)
+                {
                     return GroupChatHandler.UploadCheck(Words[1]).ToString();
                 }
-                else {
+                else
+                {
                     return "No map specified";
                 }
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["DeleteCommands"].Item2))
             {
                 if (Words.Length > 2)
-                 
+
                 {
                     string[] Reason = Message.Split(new string[] { Words[1] }, StringSplitOptions.None);
                     Tuple<string, SteamID> removed = ImpMaster.ImpRemove(Words[1], sender, false, Reason[1]);
@@ -272,21 +262,25 @@ namespace SteamBot
                     Tuple<string, SteamID> removed = ImpMaster.ImpRemove(Words[1], sender, false, "(None)");
                     return "Removed map: " + removed.Item1;
                 }
-               
-                
+
+
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["ImpCommands"].Item2))
-            { 
-                
-                if (Words.Length == 1) {
+            {
+
+                if (Words.Length == 1)
+                {
                     return "!add <mapname> <url> <notes> is the command. however if the map is uploaded you do not need to include the url";
                 }
                 int length = (Words.Length > 2).GetHashCode(); //Checks if there are more than 3 or more words
                 int Uploaded = (GroupChatHandler.UploadCheck(Words[1])).GetHashCode(); //Checks if map is uploaded. Crashes if only one word //TODO FIX THAT
                 string UploadStatus = "Uploaded"; //Sets a string, that'll remain unless altered
-                if (length + Uploaded == 0) { //Checks if either test beforehand returned true
+                if (length + Uploaded == 0)
+                { //Checks if either test beforehand returned true
                     return "Make sure to include the download URL!";
-                } else {
+                }
+                else
+                {
                     string[] notes = FullMessage.Split(new string[] { Words[2 - Uploaded] }, StringSplitOptions.None); //Splits by the 2nd word (the uploadurl) but if it's already uploaded, it'll split by the map instead 
                     if (Uploaded == 0) //If the map isn't uploaded, it'll set the upload status to the 3rd word (The URL)
                     {
@@ -300,7 +294,7 @@ namespace SteamBot
             }
             if (DoesMessageStartWith(Words[0], ChatCommands["Update"].Item2))
             {
-            
+
                 if (Words.Length <= 2)  //Checks if there are less than 2 words, the previous map and map to change
                 {
                     return "!updatemap <PreviousMapName> <NewMapName> <url> <notes> is the command.";
@@ -324,7 +318,8 @@ namespace SteamBot
                 { //Checks if either test beforehand returned true
                     return "Make sure to include the download URL!";
                 }
-                else {
+                else
+                {
                     string[] notes = FullMessage.Split(new string[] { FullMessageCutArray[1 - Uploaded] }, StringSplitOptions.None); //Splits by the 2nd word (the uploadurl) but if it's already uploaded, it'll split by the map instead 
                     if (Uploaded == 0) //If the map isn't uploaded, it'll set the upload status to the 3rd word (The URL)
                     {
@@ -341,25 +336,25 @@ namespace SteamBot
 
 
                 Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>();
-                
-           if (File.Exists(@MapStoragePath))
+
+                if (File.Exists(@MapStoragePath))
 
                 {
-                  Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>(JsonConvert.DeserializeObject<Dictionary<string, Tuple<string, SteamID, string, bool>>>(System.IO.File.ReadAllText(@MapStoragePath)));
-              }
-             else
-               {
+                    Maplist = new Dictionary<string, Tuple<string, SteamID, string, bool>>(JsonConvert.DeserializeObject<Dictionary<string, Tuple<string, SteamID, string, bool>>>(System.IO.File.ReadAllText(@MapStoragePath)));
+                }
+                else
+                {
                     System.IO.File.WriteAllText(@GroupChatHandler.MapStoragePath, JsonConvert.SerializeObject(Maplist));
-              }
-                
+                }
+
                 string Maplisting = "";
                 string DownloadListing = "";
                 foreach (var item in Maplist)
-              {
+                {
                     Maplisting = Maplisting + item.Key + " , ";
                     DownloadListing = DownloadListing + item.Value.Item1 + " , ";
-              }
-                
+                }
+
                 bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, DownloadListing);
                 return Maplisting;
             }
@@ -396,20 +391,9 @@ namespace SteamBot
             return null;
         }
 
-       public static bool DoesMessageStartWith (string Message, string[] Comparison)
+        public static bool DoesMessageStartWith(string Message, string[] Comparison)
         {
-            
-            foreach(string CommandWord in Comparison)
-            {
-                if (Message.StartsWith(CommandWord, StringComparison.OrdinalIgnoreCase))
-                {
-                    return true;
-                }
-            }
-            return false;
-                
+            return new Utilities().DoesMessageStartWith(Message, Comparison);
         }
-
-       
     }
 }
