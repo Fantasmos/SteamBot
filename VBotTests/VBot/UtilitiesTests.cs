@@ -28,5 +28,11 @@ namespace SteamBot.VBot.Tests
         {
             Assert.IsTrue(new Utilities().DoesMessageStartWith("this is my message", new string[] { "some", "words", "this" }));
         }
+
+        [TestMethod()]
+        public void GivenAMessageThatStartsWithACommand_HoweverTheresNoSpace_ItShouldNotMatch()
+        {
+            Assert.IsFalse(new Utilities().DoesMessageStartWith("!addreply something", new string[] { "!add" }));
+        }
     }
 }

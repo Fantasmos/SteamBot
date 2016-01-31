@@ -7,7 +7,14 @@ namespace SteamBot.VBot
     {
         public bool DoesMessageStartWith(string Message, string[] Comparison)
         {
-            return Comparison.Any(CommandWord => Message.StartsWith(CommandWord, StringComparison.OrdinalIgnoreCase));
+            string[] words = Message.Split(' ');
+            if (words.Length > 0)
+            {
+                string firstWord = words[0];
+                return Comparison.Any(CommandWord => firstWord.Equals(CommandWord, StringComparison.OrdinalIgnoreCase));
+            }
+
+            return false;
         }
     }
 }
