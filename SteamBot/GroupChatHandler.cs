@@ -1158,7 +1158,7 @@ namespace SteamBot
             }
             RSSTimer();
         }
-        public void SheetSyncUpload(bool ForceSync, WorksheetEntry Worksheet, CellFeed cellFeed, SpreadsheetsService service, OAuth2Parameters paramaters)
+        public void SheetSyncUpload(bool ForceSync, WorksheetEntry Worksheet, SpreadsheetsService service, OAuth2Parameters paramaters)
         {
             Dictionary<string, Tuple<string, string, string, bool>> OnlineMapList = new Dictionary<string, Tuple<string, string, string, bool>>();
             int Entries = 1;
@@ -1201,10 +1201,41 @@ namespace SteamBot
         }
 
 
+    /// <summary>
+    /// New Method To get Worksheet
+    /// </summary>
+    /// <returns></returns>
+        public WorksheetEntry GetWorksheet()
+    {
+        OAuth2Parameters parameters = new OAuth2Parameters();
+        parameters.ClientId = CLIENT_ID;
+        parameters.ClientSecret = CLIENT_SECRET;
+        parameters.RedirectUri = REDIRECT_URI;
+        parameters.Scope = SCOPE;
+        parameters.AccessType = "offline";
+        parameters.RefreshToken = GoogleAPI;
+        OAuthUtil.RefreshAccessToken(parameters);
+        string accessToken = parameters.AccessToken;
 
+        GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, parameters);
+        SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
+        service.RequestFactory = requestFactory;
+        SpreadsheetQuery query = new SpreadsheetQuery(SpreadSheetURI);
+        SpreadsheetFeed feed = service.Query(query);
+        SpreadsheetEntry spreadsheet = (SpreadsheetEntry)feed.Entries[0];
+        WorksheetFeed wsFeed = spreadsheet.Worksheets;
+        WorksheetEntry worksheet = (WorksheetEntry)wsFeed.Entries[0];
+        return worksheet;
+    }
 
+    public void NewSheetsync (bool forcesync)
+    {
+        WorksheetEntry worksheet = GetWorksheet();
+        worksheet.Cols = 5;
+        worksheet.Rows = Convert.ToUInt32(Maplist.Count + 1);
 
-
+        worksheet.Update();
+    }
         /// <summary>
         /// Updates the online spreadsheet according the maps file
         /// </summary>
