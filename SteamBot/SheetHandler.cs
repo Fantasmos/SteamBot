@@ -11,14 +11,14 @@ namespace SteamBot
 {
     class SheetHandler
     {
-        OAuth2Parameters parameters = new OAuth2Parameters();
+        
         /// <summary>
         /// New Method To get Worksheet
         /// </summary>
         /// <returns></returns>
-        public WorksheetEntry GetWorksheet(SpreadsheetsService service, OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI )
+        public WorksheetEntry GetWorksheet( OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI )
         {
-            
+            SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
             OAuthUtil.RefreshAccessToken(parameters);
             string accessToken = parameters.AccessToken;
 
@@ -34,13 +34,12 @@ namespace SteamBot
         }
 
         //public void UploadSheet(bool Forcesync, Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist, String IntegrationName, string CLIENT_ID,string CLIENT_SECRET, string REDIRECT_URI, string SCOPE, string GoogleAPI)
-        public void UploadSheet(bool Forcesync, Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist, string IntegrationName, string SpreadSheetURI)
+        public void UploadSheet(bool Forcesync, Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist, OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI)
         {
             
-
             SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
 
-            WorksheetEntry worksheet = GetWorksheet(service, parameters,IntegrationName,SpreadSheetURI);
+            WorksheetEntry worksheet = GetWorksheet( parameters,IntegrationName,SpreadSheetURI);
             worksheet.Cols = 5;
             worksheet.Rows = Convert.ToUInt32(Maplist.Count + 1);
             worksheet.Update();
@@ -85,6 +84,50 @@ namespace SteamBot
 
                 cellFeed.Publish();
                 CellFeed batchResponse = (CellFeed)service.Batch(batchRequest, new Uri(cellFeed.Batch));
+        }
+        public Dictionary<string, Tuple<string, SteamID, string, bool>> SyncSheetDownload( WorksheetEntry Worksheet,  string IntegrationName , OAuth2Parameters paramaters)
+        {
+            SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
+
+            Dictionary<string, Tuple<string, SteamID, string, bool>> OnlineMapList = new Dictionary<string, Tuple<string, SteamID, string, bool>>();
+            int Entries = 1;
+
+            string map = "MapNameError";
+            string URL = "URL ERROR";
+            SteamID UserSteamID = 0;
+            string Note = "No Notes";
+            bool MapUploadStatus = false;
+
+            AtomLink listFeedLink = Worksheet.Links.FindService(GDataSpreadsheetsNameTable.ListRel, null);
+
+            ListQuery listQuery = new ListQuery(listFeedLink.HRef.ToString());
+            ListFeed listFeed = service.Query(listQuery);
+
+            //TODO GENERAL CLEANUP
+
+            foreach (ListEntry row in listFeed.Entries)
+            {
+
+                foreach (ListEntry.Custom element in row.Elements)
+                {
+                    map = row.Elements[0].Value;
+                    URL = row.Elements[1].Value;
+                    //UserSteamID = row.Elements[2].Value; //TODO Convert String to STEAMID
+                    Note = row.Elements[3].Value;
+
+                    if (row.Elements[3].Value == "TRUE")
+                    {
+                        MapUploadStatus = true;
+                    }
+                    else
+                    {
+                        MapUploadStatus = false;
+                    }
+                    OnlineMapList.Add(map, new Tuple<string, SteamID, string, bool>(URL, UserSteamID, Note, MapUploadStatus));
+                }
+            }
+            return OnlineMapList;
+            
         }
     }
 }
