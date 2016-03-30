@@ -1168,31 +1168,24 @@ namespace SteamBot
             string SteamID = "Empty";
             string Note = "No Notes";
             bool MapUploadStatus = false;
-            
-            
-            foreach (CellEntry cell in cellFeed.Entries)
+
+            // Fetch the list feed of the worksheet.
+            ListQuery listQuery = new ListQuery(listFeedLink.HRef.ToString());
+            ListFeed listFeed = service.Query(listQuery);
+
+            foreach (ListEntry row in listFeed.Entries)
             {
-                if (cell.Title.Text == "A" + Entries.ToString())
+                
+               foreach (ListEntry.Custom element in row.Elements)
                 {
-                    map = cell.Value;
-                }
-                if (cell.Title.Text == "B" + Entries.ToString())
-                {
-                    URL = cell.Value;
-                }
-                if (cell.Title.Text == "C" + Entries.ToString())
-                {
-                    SteamID = cell.Value;
+                    map = row.Elements[0].Value;
+                    url = row.Elements[1].Value;
+                    SteamID = row.Elements[2].Value;
+                    note = row.Elements[3].Value;
+                    
+                    //Make these proper values
 
-                }
-                if (cell.Title.Text == "D" + Entries.ToString())
-                {
-                    Note = cell.Value;
-
-                }
-                if (cell.Title.Text == "E" + Entries.ToString())
-                {
-                    if (cell.Value == "TRUE")
+                    if (row.Elements[3].Value; == "TRUE")
                     {
                         MapUploadStatus = true;
                     }
@@ -1201,7 +1194,8 @@ namespace SteamBot
                         MapUploadStatus = false;
                     }
                 }
-                OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, SteamID, Note, MapUploadStatus));
+            }
+                OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, SteamID, Note, MapUploadStatus)); 
             }
         }
 
