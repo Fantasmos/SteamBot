@@ -1158,6 +1158,58 @@ namespace SteamBot
             }
             RSSTimer();
         }
+        public void SheetSyncUpload(bool ForceSync, WorksheetEntry Worksheet, CellFeed cellFeed, SpreadsheetsService service, OAuth2Parameters paramaters)
+        {
+            Dictionary<string, Tuple<string, string, string, bool>> OnlineMapList = new Dictionary<string, Tuple<string, string, string, bool>>();
+            int Entries = 1;
+            
+            string map = "MapNameError";
+            string URL = "URL ERROR";
+            string SteamID = "Empty";
+            string Note = "No Notes";
+            bool MapUploadStatus = false;
+            
+            
+            foreach (CellEntry cell in cellFeed.Entries)
+            {
+                if (cell.Title.Text == "A" + Entries.ToString())
+                {
+                    map = cell.Value;
+                }
+                if (cell.Title.Text == "B" + Entries.ToString())
+                {
+                    URL = cell.Value;
+                }
+                if (cell.Title.Text == "C" + Entries.ToString())
+                {
+                    SteamID = cell.Value;
+
+                }
+                if (cell.Title.Text == "D" + Entries.ToString())
+                {
+                    Note = cell.Value;
+
+                }
+                if (cell.Title.Text == "E" + Entries.ToString())
+                {
+                    if (cell.Value == "TRUE")
+                    {
+                        MapUploadStatus = true;
+                    }
+                    else
+                    {
+                        MapUploadStatus = false;
+                    }
+                }
+                OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, SteamID, Note, MapUploadStatus));
+            }
+        }
+
+
+
+
+
+
         /// <summary>
         /// Updates the online spreadsheet according the maps file
         /// </summary>
@@ -1188,12 +1240,12 @@ namespace SteamBot
                 SpreadsheetEntry spreadsheet = (SpreadsheetEntry)feed.Entries[0];
                 WorksheetFeed wsFeed = spreadsheet.Worksheets;
                 WorksheetEntry worksheet = (WorksheetEntry)wsFeed.Entries[0];
-
+                
                 worksheet.Cols = 5;
                 worksheet.Rows = Convert.ToUInt32(Maplist.Count + 1);
 
                 worksheet.Update();
-
+                
                 CellQuery cellQuery = new CellQuery(worksheet.CellFeedLink);
                 cellQuery.ReturnEmpty = ReturnEmptyCells.yes;
                 CellFeed cellFeed = service.Query(cellQuery);
