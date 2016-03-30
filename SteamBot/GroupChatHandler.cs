@@ -1169,9 +1169,12 @@ namespace SteamBot
             string Note = "No Notes";
             bool MapUploadStatus = false;
 
-            // Fetch the list feed of the worksheet.
+            AtomLink listFeedLink = Worksheet.Links.FindService(GDataSpreadsheetsNameTable.ListRel, null);
+
             ListQuery listQuery = new ListQuery(listFeedLink.HRef.ToString());
             ListFeed listFeed = service.Query(listQuery);
+
+            //TODO GENERAL CLEANUP
 
             foreach (ListEntry row in listFeed.Entries)
             {
@@ -1179,13 +1182,11 @@ namespace SteamBot
                foreach (ListEntry.Custom element in row.Elements)
                 {
                     map = row.Elements[0].Value;
-                    url = row.Elements[1].Value;
+                    URL = row.Elements[1].Value;
                     SteamID = row.Elements[2].Value;
-                    note = row.Elements[3].Value;
+                    Note = row.Elements[3].Value;
                     
-                    //Make these proper values
-
-                    if (row.Elements[3].Value; == "TRUE")
+                    if (row.Elements[3].Value == "TRUE")
                     {
                         MapUploadStatus = true;
                     }
