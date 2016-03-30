@@ -93,9 +93,17 @@ namespace SteamBot
         public static string BanListFilePath = "Banlist.json";
         public static string[] Debug = { "debug_01", "debug_02", "debug_03" };
 
+
         public static string InstantRepliesFile = "instantreplies.json";
-
-
+        public static OAuth2Parameters OauthParameters = new OAuth2Parameters()
+        {
+            ClientSecret = groupchatsettings["CLIENT_SECRET"],
+            ClientId = groupchatsettings["CLIENT_ID"],
+            Scope = groupchatsettings["SCOPE"],
+            RedirectUri = groupchatsettings["REDIRECT_URI"],
+            AccessType = "offline",
+            RefreshToken = groupchatsettings["GoogleAPI"]
+        };
 
         static Dictionary<string, Tuple<string, List<string>>> ChatCommandsArray = JsonConvert.DeserializeObject<Dictionary<string, Tuple<string, List<string>>>>(System.IO.File.ReadAllText(@"ChatCommands.json"));
 
@@ -337,26 +345,17 @@ namespace SteamBot
             }
             if (command.StartsWith("!AUTHENTICATE", StringComparison.OrdinalIgnoreCase))
             {
-                OAuth2Parameters parameters = new OAuth2Parameters();
-
-                parameters.ClientId = CLIENT_ID;
-
-                parameters.ClientSecret = CLIENT_SECRET;
-
-                parameters.RedirectUri = REDIRECT_URI;
-
-                parameters.Scope = SCOPE;
-
-                string authorizationUrl = OAuthUtil.CreateOAuth2AuthorizationUrl(parameters);
+                
+                string authorizationUrl = OAuthUtil.CreateOAuth2AuthorizationUrl(OauthParameters);
                 Log.Interface(authorizationUrl);
                 Log.Info(authorizationUrl);
                 Log.Debug(authorizationUrl);
                 Log.Interface("Please visit the URL above to authorize your OAuth "
                     + "request token.  Once that is complete, type in your access code to "
                     + "continue...");
-                parameters.AccessCode = Console.ReadLine();
-                OAuthUtil.GetAccessToken(parameters);
-                string refreshToken = parameters.RefreshToken;
+                OauthParameters.AccessCode = Console.ReadLine();
+                OAuthUtil.GetAccessToken(OauthParameters);
+                string refreshToken = OauthParameters.RefreshToken;
                 Log.Interface("Your refresh token needs to be added to your settings file it is as follows:");
                 Log.Interface(refreshToken);
                 GoogleAPI = refreshToken;
@@ -1198,92 +1197,29 @@ namespace SteamBot
             }
                 OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, SteamID, Note, MapUploadStatus)); 
             }
-        }
 
 
-    /// <summary>
-    /// New Method To get Worksheet
-    /// </summary>
-    /// <returns></returns>
-        public WorksheetEntry GetWorksheet(SpreadsheetsService service)
-    {
-        OAuth2Parameters parameters = new OAuth2Parameters();
-        parameters.ClientId = CLIENT_ID;
-        parameters.ClientSecret = CLIENT_SECRET;
-        parameters.RedirectUri = REDIRECT_URI;
-        parameters.Scope = SCOPE;
-        parameters.AccessType = "offline";
-        parameters.RefreshToken = GoogleAPI;
-        OAuthUtil.RefreshAccessToken(parameters);
-        string accessToken = parameters.AccessToken;
 
-        GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, parameters);
-        
-        service.RequestFactory = requestFactory;
-        SpreadsheetQuery query = new SpreadsheetQuery(SpreadSheetURI);
-        SpreadsheetFeed feed = service.Query(query);
-        SpreadsheetEntry spreadsheet = (SpreadsheetEntry)feed.Entries[0];
-        WorksheetFeed wsFeed = spreadsheet.Worksheets;
-        WorksheetEntry worksheet = (WorksheetEntry)wsFeed.Entries[0];
-        return worksheet;
-    }
+     
 
-    public void NewSheetsync (bool forcesync)
-    {
-        SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
-        WorksheetEntry worksheet = GetWorksheet(service);
-        worksheet.Cols = 5;
-        worksheet.Rows = Convert.ToUInt32(Maplist.Count + 1);
-
-        worksheet.Update();
-
-
-        CellQuery cellQuery = new CellQuery(worksheet.CellFeedLink);
-        cellQuery.ReturnEmpty = ReturnEmptyCells.yes;
-        CellFeed cellFeed = service.Query(cellQuery);
-        CellFeed batchRequest = new CellFeed(cellQuery.Uri, service);
-
-        int Entries = 1;
-
-        foreach (var item in Maplist)
+        public void NewSheetsync(bool Forcesync)
         {
-            Entries = Entries + 1;
-            foreach (CellEntry cell in cellFeed.Entries)
+            Bot.SteamFriends.SetPersonaName("[" + Maplist.Count.ToString() + "] " + Bot.DisplayName);
+
+            if ((OnlineSync.StartsWith("true", StringComparison.OrdinalIgnoreCase) && !SyncRunning) || ForceSync)
             {
-                if (cell.Title.Text == "A" + Entries.ToString())
-                {
-                    cell.InputValue = item.Key;
-                }
-                if (cell.Title.Text == "B" + Entries.ToString())
-                {
-                    cell.InputValue = item.Value.Item1;
+               
 
-                }
-                if (cell.Title.Text == "C" + Entries.ToString())
-                {
-                    cell.InputValue = item.Value.Item2.ToString();
-
-                }
-                if (cell.Title.Text == "D" + Entries.ToString())
-                {
-                    cell.InputValue = item.Value.Item3.ToString();
-
-                }
-                if (cell.Title.Text == "E" + Entries.ToString())
-                {
-                    cell.InputValue = item.Value.Item4.ToString();
-                }
+                new SheetHandler().UploadSheet(Forcesync, Maplist, IntegrationName,CLIENT_ID, CLIENT_SECRET,REDIRECT_URI,SCOPE,GoogleAPI);   //Should this be its own method, I saw you do it for utilities, i'm not sure if its good practice
+                SyncRunning = false;
+            }
+            else if (OnlineSync.StartsWith("true", StringComparison.OrdinalIgnoreCase))
+            {
+                SpreadsheetSync = true;
             }
         }
 
-        cellFeed.Publish();
-        CellFeed batchResponse = (CellFeed)service.Batch(batchRequest, new Uri(cellFeed.Batch));
-        // Log.Interface("Completed Sync");
-        SyncRunning = false;
 
-    }
-            
-        
 
         /// <summary>
         /// Updates the online spreadsheet according the maps file
@@ -1297,17 +1233,11 @@ namespace SteamBot
             {
                 SyncRunning = true;
                 //Log.Interface ("Beginning Sync");
-                OAuth2Parameters parameters = new OAuth2Parameters();
-                parameters.ClientId = CLIENT_ID;
-                parameters.ClientSecret = CLIENT_SECRET;
-                parameters.RedirectUri = REDIRECT_URI;
-                parameters.Scope = SCOPE;
-                parameters.AccessType = "offline";
-                parameters.RefreshToken = GoogleAPI;
-                OAuthUtil.RefreshAccessToken(parameters);
-                string accessToken = parameters.AccessToken;
+                
+                OAuthUtil.RefreshAccessToken(OauthParameters);
+                string accessToken = OauthParameters.AccessToken;
 
-                GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, parameters);
+                GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, OauthParameters);
                 SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
                 service.RequestFactory = requestFactory;
                 SpreadsheetQuery query = new SpreadsheetQuery(SpreadSheetURI);
