@@ -18,12 +18,11 @@ namespace SteamBot
         /// <returns></returns>
         public WorksheetEntry GetWorksheet(OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI)
         {
-            SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
-            OAuthUtil.RefreshAccessToken(parameters);
-            string accessToken = parameters.AccessToken;
-
+            
+            
             GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, parameters);
-
+            SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
+            string accessToken = parameters.AccessToken;
             service.RequestFactory = requestFactory;
             SpreadsheetQuery query = new SpreadsheetQuery(SpreadSheetURI);
             SpreadsheetFeed feed = service.Query(query);

@@ -451,9 +451,11 @@ namespace SteamBot
 
             if (Words[0].StartsWith("!OnlineSheetDownload", StringComparison.OrdinalIgnoreCase))
             {
+                OAuthUtil.RefreshAccessToken(OauthParameters);
                 WorksheetEntry Worksheet = new SheetHandler().GetWorksheet(OauthParameters, IntegrationName, SpreadSheetURI);
-                PrintMapList(new SheetHandler().SyncSheetDownload(Worksheet, IntegrationName, OauthParameters));
-
+                string[] MapData = PrintMapList(new SheetHandler().SyncSheetDownload(Worksheet, IntegrationName, OauthParameters));
+                Bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, MapData[1]);
+                return MapData[0];
             }
 
             if (DoesMessageStartWith(Words[0], ChatCommandsArray["Rejoin"].Item2))
@@ -1209,6 +1211,7 @@ namespace SteamBot
 
             if ((OnlineSync.StartsWith("true", StringComparison.OrdinalIgnoreCase) && !SyncRunning) || Forcesync)
             {
+                OAuthUtil.RefreshAccessToken(OauthParameters);
                 new SheetHandler().UploadSheet(Forcesync, Maplist, OauthParameters, IntegrationName, SpreadSheetURI); //Should this be its own method, I saw you do it for utilities, i'm not sure if its good practice
                 SyncRunning = false;
             }
