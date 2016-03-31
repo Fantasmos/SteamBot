@@ -86,8 +86,6 @@ namespace SteamBot
         }
         public Dictionary<string, Tuple<string, string, string, bool>> SyncSheetDownload(string IntegrationName, OAuth2Parameters paramaters, string SpreadSheetURI)
         {
-
-
             GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, paramaters);
             SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
 
@@ -96,10 +94,8 @@ namespace SteamBot
 
             WorksheetEntry worksheet = GetWorksheet(paramaters, IntegrationName, SpreadSheetURI, service);
 
-
             Dictionary<string, Tuple<string, string, string, bool>> OnlineMapList = new Dictionary<string, Tuple<string, string, string, bool>>();
-            int Entries = 1;
-
+            
             string map = "MapNameError";
             string URL = "URL ERROR";
             string UserSteamID = "0";
