@@ -923,7 +923,7 @@ namespace SteamBot
         {
             string Maplisting = "";
             string DownloadListing = "";
-            foreach (var item in Maplist)
+            foreach (var item in MapListToExtract)
             {
                 Maplisting = Maplisting + item.Key + " , ";
                 DownloadListing = DownloadListing + item.Value.Item1 + " , ";

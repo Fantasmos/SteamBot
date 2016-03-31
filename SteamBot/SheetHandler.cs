@@ -127,7 +127,10 @@ namespace SteamBot
                     {
                         MapUploadStatus = false;
                     }
-                    OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, UserSteamID, Note, MapUploadStatus));
+                    if (!OnlineMapList.ContainsKey(map))
+                    {
+                        OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, UserSteamID, Note, MapUploadStatus));
+                    }
                 }
             }
             return OnlineMapList;
