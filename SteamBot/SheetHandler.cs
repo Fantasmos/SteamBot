@@ -112,8 +112,7 @@ namespace SteamBot
             foreach (ListEntry row in listFeed.Entries)
             {
 
-                foreach (ListEntry.Custom element in row.Elements)
-                {
+                
                     map = row.Elements[0].Value;
                     URL = row.Elements[1].Value;
                     UserSteamID = row.Elements[2].Value;
@@ -127,8 +126,11 @@ namespace SteamBot
                     {
                         MapUploadStatus = false;
                     }
-                    OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, UserSteamID, Note, MapUploadStatus));
-                }
+                    if (!OnlineMapList.ContainsKey(map))
+                    {
+                        OnlineMapList.Add(map, new Tuple<string, string, string, bool>(URL, UserSteamID, Note, MapUploadStatus));
+                    }
+                
             }
             return OnlineMapList;
 
