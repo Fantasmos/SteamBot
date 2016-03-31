@@ -85,10 +85,10 @@ namespace SteamBot
 
         public static OAuth2Parameters OauthParameters = new OAuth2Parameters()
         {
-            ClientSecret = groupchatsettings["CLIENT_SECRET"],
             ClientId = groupchatsettings["CLIENT_ID"],
-            Scope = groupchatsettings["SCOPE"],
+            ClientSecret = groupchatsettings["CLIENT_SECRET"],
             RedirectUri = groupchatsettings["REDIRECT_URI"],
+            Scope = groupchatsettings["SCOPE"],
             AccessType = "offline",
             RefreshToken = groupchatsettings["GoogleAPI"]
         };
@@ -428,10 +428,7 @@ namespace SteamBot
             }
             else
             {
-
             }
-
-
             if (adminresponse != null)
             {
                 Bot.SteamFriends.SendChatRoomMessage(Groupchat, EChatEntryType.ChatMsg, adminresponse);
