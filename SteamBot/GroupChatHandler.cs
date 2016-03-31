@@ -450,8 +450,7 @@ namespace SteamBot
             if (Words[0].StartsWith("!OnlineSheetDownload", StringComparison.OrdinalIgnoreCase))
             {
                 OAuthUtil.RefreshAccessToken(OauthParameters);
-                WorksheetEntry Worksheet = new SheetHandler().GetWorksheet(OauthParameters, IntegrationName, SpreadSheetURI);
-                string[] MapData = PrintMapList(new SheetHandler().SyncSheetDownload(Worksheet, IntegrationName, OauthParameters));
+                string[] MapData = PrintMapList(new SheetHandler().SyncSheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
                 Bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, MapData[1]);
                 return MapData[0];
             }
