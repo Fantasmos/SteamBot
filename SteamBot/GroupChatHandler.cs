@@ -85,10 +85,10 @@ namespace SteamBot
 
         public static OAuth2Parameters OauthParameters = new OAuth2Parameters()
         {
-            ClientSecret = groupchatsettings["CLIENT_SECRET"],
             ClientId = groupchatsettings["CLIENT_ID"],
-            Scope = groupchatsettings["SCOPE"],
+            ClientSecret = groupchatsettings["CLIENT_SECRET"],
             RedirectUri = groupchatsettings["REDIRECT_URI"],
+            Scope = groupchatsettings["SCOPE"],
             AccessType = "offline",
             RefreshToken = groupchatsettings["GoogleAPI"]
         };
@@ -428,10 +428,7 @@ namespace SteamBot
             }
             else
             {
-
             }
-
-
             if (adminresponse != null)
             {
                 Bot.SteamFriends.SendChatRoomMessage(Groupchat, EChatEntryType.ChatMsg, adminresponse);
@@ -453,8 +450,7 @@ namespace SteamBot
             if (Words[0].StartsWith("!OnlineSheetDownload", StringComparison.OrdinalIgnoreCase))
             {
                 OAuthUtil.RefreshAccessToken(OauthParameters);
-                WorksheetEntry Worksheet = new SheetHandler().GetWorksheet(OauthParameters, IntegrationName, SpreadSheetURI);
-                string[] MapData = PrintMapList(new SheetHandler().SyncSheetDownload(Worksheet, IntegrationName, OauthParameters));
+                string[] MapData = PrintMapList(new SheetHandler().SyncSheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
                 Bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, MapData[1]);
                 return MapData[0];
             }
