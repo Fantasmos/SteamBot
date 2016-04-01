@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExampleBot", "SteamBot\ExampleBot.csproj", "{E81DED36-EDF5-41A5-8666-A3A0C581762F}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -20,6 +20,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VBotTests", "VBotTests\VBotTests.csproj", "{F3CE0353-B823-4C72-AE0D-677DDEBF2D38}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamAuth", "SteamAuth\SteamAuth\SteamAuth.csproj", "{5AD0934E-F6C4-4AE5-83AF-C788313B2A87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VbotSheetTesting", "UnitTestProject1\VbotSheetTesting.csproj", "{79D92A42-20B9-40DD-9653-FF8CDE61ADB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,6 +45,10 @@ Global
 		{5AD0934E-F6C4-4AE5-83AF-C788313B2A87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AD0934E-F6C4-4AE5-83AF-C788313B2A87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AD0934E-F6C4-4AE5-83AF-C788313B2A87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79D92A42-20B9-40DD-9653-FF8CDE61ADB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79D92A42-20B9-40DD-9653-FF8CDE61ADB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79D92A42-20B9-40DD-9653-FF8CDE61ADB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79D92A42-20B9-40DD-9653-FF8CDE61ADB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

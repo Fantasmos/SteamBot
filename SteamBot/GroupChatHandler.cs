@@ -450,7 +450,8 @@ namespace SteamBot
             if (Words[0].StartsWith("!OnlineSheetDownload", StringComparison.OrdinalIgnoreCase))
             {
                 OAuthUtil.RefreshAccessToken(OauthParameters);
-                string[] MapData = PrintMapList(new SheetHandler().SyncSheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
+                string[] MapData = PrintMapList(new SheetService().SheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
+                
                 Bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, MapData[1]);
                 return MapData[0];
             }
@@ -1214,7 +1215,7 @@ namespace SteamBot
             if ((OnlineSync.StartsWith("true", StringComparison.OrdinalIgnoreCase) && !SyncRunning) || Forcesync)
             {
                 OAuthUtil.RefreshAccessToken(OauthParameters);
-                new SheetHandler().UploadSheet(Forcesync, Maplist, OauthParameters, IntegrationName, SpreadSheetURI); //Should this be its own method, I saw you do it for utilities, i'm not sure if its good practice
+                new SheetService().UploadSheet(Forcesync, Maplist, OauthParameters, IntegrationName, SpreadSheetURI); //Should this be its own method, I saw you do it for utilities, i'm not sure if its good practice
                 SyncRunning = false;
             }
             else if (OnlineSync.StartsWith("true", StringComparison.OrdinalIgnoreCase))
