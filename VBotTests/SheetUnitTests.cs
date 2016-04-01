@@ -10,7 +10,7 @@ namespace Steambot.tests
     [TestClass]
     public class UnitTest1
     {
-        [TestMethod]
+        /* [TestMethod]
         public void UploadDownloadTests()
         {
             OAuthUtil.RefreshAccessToken(SteamBot.GroupChatHandler.OauthParameters);
@@ -191,5 +191,5 @@ namespace Steambot.tests
                 }
             }
         }
-    }
+    */}
 }
