@@ -9,14 +9,14 @@ using SteamKit2;
 
 namespace SteamBot
 {
-    class SheetHandler
+    public class SheetService
     {
 
         /// <summary>
         /// New Method To get Worksheet
         /// </summary>
         /// <returns></returns>
-        public  WorksheetEntry GetWorksheet(OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI, SpreadsheetsService service)
+        public WorksheetEntry GetWorksheet(OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI, SpreadsheetsService service)
         {
 
             SpreadsheetQuery query = new SpreadsheetQuery(SpreadSheetURI);
@@ -29,9 +29,8 @@ namespace SteamBot
 
 
         //public void UploadSheet(bool Forcesync, Dictionary<string, Tuple<string, SteamID, string, bool>> Maplist, String IntegrationName, string CLIENT_ID,string CLIENT_SECRET, string REDIRECT_URI, string SCOPE, string GoogleAPI)
-        public  void UploadSheet(bool Forcesync, Dictionary<string, Tuple<string, string, string, bool>> Maplist, OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI)
+        public void UploadSheet(bool Forcesync, Dictionary<string, Tuple<string, string, string, bool>> Maplist, OAuth2Parameters parameters, string IntegrationName, string SpreadSheetURI)
         {
-            
             GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, parameters);
             SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
 
@@ -78,16 +77,38 @@ namespace SteamBot
             listFeed.Publish();
 
         }
-        public  Dictionary<string, Tuple<string, string, string, bool>> SyncSheetDownload(string IntegrationName, OAuth2Parameters paramaters, string SpreadSheetURI)
+        public Dictionary<string, Tuple<string, string, string, bool>> SyncrhoniseDictionaries(string MapToExclude, Dictionary<string, Tuple<string, string, string, bool>> MapList1, Dictionary<string, Tuple<string, string, string, bool>> MapList2)
         {
-            
+
+            if (MapList1 != MapList2) //This ensures that the method is only conducted if the values are different, stopping wasted time
+            {
+                var FirstMapList = MapList1; //Convert to var to utilise in unions
+                var SecondMapList = MapList2; //Convert to var to utilise in unions
+                var UnionMapList = FirstMapList.Union(SecondMapList); //Combine so we can iterate over in a single loop
+                Dictionary<string, Tuple<string, string, string, bool>> ReturnDictionary = new Dictionary<string, Tuple<string, string, string, bool>>();
+
+
+                foreach (var entry in UnionMapList)
+                {
+                    if (entry.Key != MapToExclude && !ReturnDictionary.ContainsKey(entry.Key)) //Checks for repeated values, or maps we don't want to have in the new list
+                    {
+                        ReturnDictionary.Add(entry.Key, entry.Value); //Adds the map to the new list
+                    }
+                }
+                return ReturnDictionary; //Returns the newly created dictionary
+            }
+            return MapList1; //Incase that the maplists are already synchronised, it just returns the first one, unlikely but important to ensure. 
+        }
+
+        public Dictionary<string, Tuple<string, string, string, bool>> SheetDownload(string IntegrationName, OAuth2Parameters paramaters, string SpreadSheetURI)
+        {
             GOAuth2RequestFactory requestFactory = new GOAuth2RequestFactory(null, IntegrationName, paramaters);
             SpreadsheetsService service = new SpreadsheetsService(IntegrationName);
 
             string accessToken = paramaters.AccessToken;
             service.RequestFactory = requestFactory;
 
-            WorksheetEntry worksheet = GetWorksheet(paramaters, IntegrationName, SpreadSheetURI, service);
+            WorksheetEntry worksheet = this.GetWorksheet(paramaters, IntegrationName, SpreadSheetURI, service);
 
             Dictionary<string, Tuple<string, string, string, bool>> OnlineMapList = new Dictionary<string, Tuple<string, string, string, bool>>();
 

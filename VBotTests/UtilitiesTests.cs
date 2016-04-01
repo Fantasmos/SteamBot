@@ -15,6 +15,7 @@ namespace SteamBot.Tests
         public void GivenANormalMessage_AndAnEmptyListOfMatches_ItCannotStartWithAnyOfThoseMatches()
         {
             Assert.IsFalse(new SteamBot.Utilities().DoesMessageStartWith("this is my message", new List<string>(new string[] { })));
+            
         }
 
         [TestMethod()]

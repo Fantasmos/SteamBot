@@ -450,9 +450,15 @@ namespace SteamBot
             if (Words[0].StartsWith("!OnlineSheetDownload", StringComparison.OrdinalIgnoreCase))
             {
                 OAuthUtil.RefreshAccessToken(OauthParameters);
-                string[] MapData = PrintMapList(new SheetHandler().SyncSheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
+                string[] MapData = PrintMapList(new SheetService().SheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
+                
                 Bot.SteamFriends.SendChatMessage(sender, EChatEntryType.ChatMsg, MapData[1]);
                 return MapData[0];
+            }
+            if (Words[0].StartsWith("!ForceSync", StringComparison.OrdinalIgnoreCase))
+            {
+                Synchronise(null);
+                return "Should be synchronised";
             }
             if (Words[0].StartsWith("!FriendMe", StringComparison.OrdinalIgnoreCase))
             {
@@ -1012,24 +1018,23 @@ namespace SteamBot
             return "The entry was not found";
 
         }
-
+        public void Synchronise (string MapToExclude)
+        {
+            OAuthUtil.RefreshAccessToken(OauthParameters);
+            Dictionary<string, Tuple<string, string, string, bool>> OnlineSheet = (new SheetService().SheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
+            new SheetService().SyncrhoniseDictionaries(MapToExclude, Maplist, OnlineSheet);
+        }
         public void UpdateEntryExecute(int EntryCount, string maptochange, string map, string downloadurl, string notes, string sender)
         {
             Dictionary<string, Tuple<string, string, string, bool>> NewMaplist = new Dictionary<string, Tuple<string, string, string, bool>>();
-            foreach (KeyValuePair<string, Tuple<string, string, string, bool>> OldMaplistEntry in Maplist)
+            foreach (KeyValuePair<string, Tuple<string, string, string, bool>> MaplistEntry in Maplist)
             {
-                if (NewMaplist.Count() + 1 != EntryCount)
+                if (MaplistEntry.Key == maptochange)
                 {
-                    NewMaplist.Add(OldMaplistEntry.Key, OldMaplistEntry.Value);
+                    Maplist[MaplistEntry.Key] = Tuple.Create(downloadurl, sender, notes, false);
                 }
-                else
-                {
-                    NewMaplist.Add(map, new Tuple<string, string, string, bool>(downloadurl, sender, notes, UploadCheck(map)));
-                    NewMaplist.Add(OldMaplistEntry.Key, OldMaplistEntry.Value);
-                }
-                Maplist = NewMaplist;
-                Maplist.Remove(maptochange);
                 System.IO.File.WriteAllText(@MapStoragePath, JsonConvert.SerializeObject(Maplist));
+                Synchronise(null);
                 SpreadsheetSync = true;
             }
         }
@@ -1066,6 +1071,9 @@ namespace SteamBot
             System.IO.File.WriteAllText(@MapStoragePath, JsonConvert.SerializeObject(NewMaplist));
             Tuple<string, SteamID> RemoveInformation = new Tuple<string, SteamID>(removed, userremoved);
             Maplist = NewMaplist;
+
+            Synchronise(map);
+            SpreadsheetSync = true;
             return RemoveInformation;
             {
             }
@@ -1206,15 +1214,13 @@ namespace SteamBot
             RSSTimer();
         }
 
-
         public void SheetSync(bool Forcesync)
         {
             Bot.SteamFriends.SetPersonaName("[" + Maplist.Count.ToString() + "] " + Bot.DisplayName);
 
             if ((OnlineSync.StartsWith("true", StringComparison.OrdinalIgnoreCase) && !SyncRunning) || Forcesync)
             {
-                OAuthUtil.RefreshAccessToken(OauthParameters);
-                new SheetHandler().UploadSheet(Forcesync, Maplist, OauthParameters, IntegrationName, SpreadSheetURI); //Should this be its own method, I saw you do it for utilities, i'm not sure if its good practice
+                Synchronise(null);
                 SyncRunning = false;
             }
             else if (OnlineSync.StartsWith("true", StringComparison.OrdinalIgnoreCase))
