@@ -80,8 +80,7 @@ namespace SteamBot
         public Dictionary<string, Tuple<string, string, string, bool>> SyncrhoniseDictionaries(string MapToExclude, Dictionary<string, Tuple<string, string, string, bool>> MapList1, Dictionary<string, Tuple<string, string, string, bool>> MapList2)
         {
 
-            if (MapList1 != MapList2) //This ensures that the method is only conducted if the values are different, stopping wasted time
-            {
+            
                 var FirstMapList = MapList1; //Convert to var to utilise in unions
                 var SecondMapList = MapList2; //Convert to var to utilise in unions
                 var UnionMapList = FirstMapList.Union(SecondMapList); //Combine so we can iterate over in a single loop
@@ -96,7 +95,7 @@ namespace SteamBot
                     }
                 }
                 return ReturnDictionary; //Returns the newly created dictionary
-            }
+            
             return MapList1; //Incase that the maplists are already synchronised, it just returns the first one, unlikely but important to ensure. 
         }
 
