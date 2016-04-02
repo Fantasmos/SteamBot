@@ -1022,7 +1022,8 @@ namespace SteamBot
         {
             OAuthUtil.RefreshAccessToken(OauthParameters);
             Dictionary<string, Tuple<string, string, string, bool>> OnlineSheet = (new SheetService().SheetDownload(IntegrationName, OauthParameters, SpreadSheetURI));
-            new SheetService().SyncrhoniseDictionaries(MapToExclude, Maplist, OnlineSheet);
+            Maplist = new SheetService().SyncrhoniseDictionaries(MapToExclude, Maplist, OnlineSheet);
+            new SheetService().UploadSheet(true, Maplist, OauthParameters, IntegrationName,  SpreadSheetURI);
         }
         public void UpdateEntryExecute(int EntryCount, string maptochange, string map, string downloadurl, string notes, string sender)
         {
